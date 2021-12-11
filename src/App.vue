@@ -2,10 +2,10 @@
   <v-app>
     <v-sheet height="100%" class="overflow-hidden" style="position: relative">
       <v-app-bar color="white">
-        <v-app-bar-nav-icon class="ml-4">
+        <v-app-bar-nav-icon to="/" class="ml-4">
           <v-img height="50px" contain :src="require('@/assets/logo.svg')" />
         </v-app-bar-nav-icon>
-        <v-app-bar-title> FaceAlbum </v-app-bar-title>
+        <v-app-bar-title to="/" > FaceAlbum </v-app-bar-title>
         <v-spacer></v-spacer>
         <v-btn icon>
           <v-icon>mdi-key</v-icon>
