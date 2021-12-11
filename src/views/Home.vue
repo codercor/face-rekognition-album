@@ -13,7 +13,7 @@
                   />
                 </div>
               </div>
-              <h1 class="display-1 mb-3">FaceAlbum</h1>
+              <h1 class="display-1 mb-3">FaceAlbum  {{code}} </h1>
               <p class="subheading grey--text">
                 Basit ve kullanımı kolay bir yüz tanıma uygulamasıdır.
               </p>
@@ -35,7 +35,7 @@
               </v-row>
                 <v-row>
                 <v-col md="6" offset-md="3" offset-sm="3" sm="6">
-                  <v-btn :to="`/${eventCode}`" outlined color="purple white--text" width="100%" > <v-icon>mdi-face-recognition</v-icon>  <span>  Yüzümü Bul  </span> </v-btn>
+                  <v-btn @click="goEvent" outlined color="purple white--text" width="100%" > <v-icon>mdi-face-recognition</v-icon>  <span>  Yüzümü Bul  </span> </v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -43,10 +43,21 @@
         </v-container>
 </template>
 <script>
+import {mapActions,mapGetters} from 'vuex'
 export default {
     data() {
         return {
             eventCode: '',
+        }
+    },
+    computed: {
+        ...mapGetters('event',["code"]),
+    },
+    methods: {
+        ...mapActions("event",["setCode"]), 
+        goEvent() {
+            this.setCode(this.eventCode)
+            this.$router.push(`/${this.code}`)
         }
     },
 }

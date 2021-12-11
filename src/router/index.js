@@ -11,6 +11,11 @@ const routes = [
     component: Home
   },
   {
+    path: '/results',
+    name: 'Results',
+    component: () => import('../views/Results.vue')
+  },
+  {
     path: '/:eventCode',
     name: 'Event',
     component: () => import('../views/Event.vue')
