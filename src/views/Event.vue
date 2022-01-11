@@ -72,9 +72,11 @@ import {mapActions} from 'vuex'
 export default {
   beforeMount() {
     this.getEventData();
+   
   },
   mounted() {
     this.openCamera();
+    this.setCode(this.$route.params.eventCode);
   },
   data() {
     return {
@@ -85,7 +87,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("event",['setImageBase64']),
+    ...mapActions("event",['setImageBase64','setCode']),
     getEventCode() {
       this.eventCode = this.$route.params.eventCode;
     },

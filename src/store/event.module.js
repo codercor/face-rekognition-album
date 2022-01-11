@@ -48,6 +48,7 @@ export default {
                 body: formdata,
                 redirect: "follow",
             };
+            console.log(requestOptions.body.getAll("selfie"));
             return new Promise((resolve, reject) => {
                 fetch("http://localhost:3000/rekognition/searchFace", requestOptions)
                     .then((response) => response.json())
@@ -56,8 +57,7 @@ export default {
                         resolve();
                     })
                     .catch((error) => {
-                        console.log("error", error)
-                        reject();
+                        reject(error);
                     });
             });
 

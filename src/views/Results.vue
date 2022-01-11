@@ -3,7 +3,10 @@
     <v-card class="elevation-0">
       <v-row>
         <v-col v-for="image in results" :key="image" cols="3">
-          <v-img heigth="100px" :src="'https://face-album-bucket.s3.amazonaws.com/'+image"></v-img>
+          <v-img
+            heigth="100px"
+            :src="'https://face-album-bucket.s3.amazonaws.com/' + image"
+          ></v-img>
         </v-col>
       </v-row>
     </v-card>
@@ -11,23 +14,24 @@
 </template>
 
 <script>
-import { mapGetters,mapActions } from 'vuex';
+import { mapGetters, mapActions } from "vuex";
 export default {
   async beforeMount() {
-    await this.getResults();
+    console.log("Beklicez baba");
+    try {
+      await this.getResults();
+    } catch (error) {
+      console.log(error);
+    }
   },
   computed: {
-    ...mapGetters("event",[
-      "results"
-    ]),
+    ...mapGetters("event", ["results"]),
   },
   mounted() {
     console.log(this.results);
   },
   methods: {
-    ...mapActions("event",[
-      "getResults"
-    ])
+    ...mapActions("event", ["getResults"]),
   },
 };
 </script>
