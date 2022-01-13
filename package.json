@@ -1,0 +1,26 @@
+{
+  "name": "face-rekognition-album",
+  "version": "1.0.0",
+  "description": "Find your photos by your selfie.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd client && npm run serve\" \"cd server && npm run dev\"",
+    "start": "concurrently \"cd client && npm run serve\" \"cd server && npm run start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codercor/face-rekognition-album.git"
+  },
+  "keywords": [
+    "find",
+    "face",
+    "face",
+    "rekognition"
+  ],
+  "author": "Mustafa Çor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codercor/face-rekognition-album/issues"
+  },
+  "homepage": "https://github.com/codercor/face-rekognition-album#readme"
+}
