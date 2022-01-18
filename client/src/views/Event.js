@@ -1,32 +1,36 @@
-import { Box, Container, Stack, Typography } from '@mui/material'
-import React, { useEffect } from 'react'
+import {
+    Container, Stack, Box, Typography, Button, Grid
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import BgImage from '../assets/home-bg.svg'
 import { useParams } from 'react-router-dom'
+import Welcome from '../components/Event/Welcome'
+import TakeSelfie from '../components/Event/TakeSelfie'
 export default function Event() {
-    const { event } = useParams()
+    const { event: eventParameter } = useParams()
+    const [accept, setAccept] = useState(true)
     useEffect(() => {
-        console.log(event)
+        console.log(eventParameter)
     }, [])
     return (
-        <Container maxWidth="lg" sx={{
-            background: `url('${BgImage}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            height: '80vh'
-        }}>
-            <Stack >
-                <Box
-
-                >
-                    <Typography variant="h4" color="textPrimary">
-                        Etkinliğe Hoşgeldiniz
-                    </Typography>
-                    <img style={{
-                        width: '70vw',
-                    }} src="https://www.genesishospital.com.tr/wp-content/uploads/2019/12/images-1.jpg" />
-                </Box>
-
-            </Stack>
-        </Container>
+        <>
+            {!accept && <Welcome setAccept={setAccept} />}
+            <Container maxWidth="lg" sx={{
+                background: `url('${BgImage}')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                height: '50vh',
+                width: '100%',
+                
+            }}>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }} >
+                <TakeSelfie />
+                </div>
+            </Container></>
     )
 }

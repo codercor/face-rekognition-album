@@ -10,7 +10,6 @@ import { Box } from '@mui/material'
 export default function App() {
   return (
     <Box >
-      <Navbar/>
       <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/event/:event" element={<Event/>} />
