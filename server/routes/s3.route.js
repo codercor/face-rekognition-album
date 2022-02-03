@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const grouping = require('../middlewares/grouping');
-const upload = require("../middlewares/uploads3");
+const uploadS3 = require("../middlewares/uploads3");
 const uploadForSeperate = require("../middlewares/uploadForSeperate");
 const s3Service = require("../services/s3.service");
+const clean = require("../middlewares/clean");
 //if you want to upload photos to folder in s3 you can use this endpoint [form-data] {file: file, folder: folder} [post]
-router.post('/upload',upload.array("photos[]"),grouping, async (req, res) => {
-            res.json(req.files);
+router.post('/upload', uploadForSeperate.array("photos[]"), uploadS3, grouping, async (req, res) => {
+    req.files = req.files.map(f => f.key)
+    res.json(req.files);
 })
 //get an image from s3 folder [get]
 router.get("/getOne/:folder/:photo", async (req, res) => {
@@ -24,7 +26,7 @@ router.get("/getOne/:folder/:photo", async (req, res) => {
 router.get("/getAll/:folder", async (req, res) => {
     try {
         let photos = await s3Service.getAll(req.params.folder);
-        photos = photos.map(photo =>  {return{ key: photo.Key }} );
+        photos = photos.map(photo => { return { key: photo.Key } });
         res.json(photos);
     } catch (error) {
         console.log(error.message);

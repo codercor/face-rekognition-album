@@ -10,7 +10,7 @@ app.use('/s3', routes.s3Router);
 app.use('/rekognition',routes.rekognitionRouter);
 
 
-
+require("./models/customer.model")
 
 
 app.listen(3000, () => {

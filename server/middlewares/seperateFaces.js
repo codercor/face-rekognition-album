@@ -1,5 +1,5 @@
 
-var Clipper = require('image-clipper');
+var Clipper = require('image-clipper')
 const canvas = require('canvas');
 Clipper.configure('canvas', canvas);
 const { Rekognition, S3 } = require('aws-sdk')
@@ -22,6 +22,7 @@ module.exports = async function (imagePath) {
             Bytes: fs.readFileSync(imagePath)
         }
     }).promise()
+    console.log(data);
 
     //data like this : { FaceDetails: [ { FaceId: '1', BoundingBox: { Height: 0.5, Left: 0.5, Top: 0.5, Width: 0.5 }, Confidence: 99.99999809265137, Smile: { Confidence: 99.99999904632568, Value: true }, Eyeglasses: { Confidence: 99.99999904632568, Value: false }, Emotions: [ { Type: 'HAPPY', Confidence: 99.99999904632568 } ], EyesOpen: { Confidence: 99.99999904632568, Value: true }, MouthOpen: { Confidence: 99.99999904632568, Value: true },    
 
@@ -33,8 +34,8 @@ module.exports = async function (imagePath) {
 
             const imageData = fs.readFileSync(imagePath); // read image data
             let image = new canvas.Image(); // create canvas image for read image size data
-            image.src = imageData; 
-        
+            image.src = imageData;
+
             //computed crop sizes 
             let sizes = {
                 width: image.width * faceBoundingBox.Width,
@@ -47,15 +48,19 @@ module.exports = async function (imagePath) {
             let imageName = imagePath.split('\\');
             imageName = imageName[imageName.length - 1];
 
-            //create cropped image
-            Clipper(imagePath, function () {
-                this.crop(sizes.Left, sizes.Top, sizes.width, sizes.height)
-                    .quality(100) // set quality
-                    .toFile(path.resolve(`seperate/after/${imageName}-${i}.jpg`), function () {
-                        //save cropped image to seperate/after folder
-                        console.log('saved!');
-                    });
-            });
+            await new Promise((resolve, reject) => {
+                //create cropped image
+                Clipper(imagePath, function () {
+                    this.crop(sizes.Left, sizes.Top, sizes.width, sizes.height)
+                        .quality(100) // set quality
+                        .toFile(path.resolve(`seperate/after/${imageName}-${i}.jpg`), function () {
+                            //save cropped image to seperate/after folder
+                            console.log('saved!');
+                            resolve();
+                        });
+                });
+            })
         }
     }
+    return;
 }

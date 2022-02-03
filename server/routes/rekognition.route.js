@@ -14,7 +14,7 @@ router.post( "/searchFace",(req,res,next)=>{
     let selfie =  fs.readFileSync(filePath);
     console.log("Yüz bulunuyor inşAllah");
     let results = await rekognitionService.searchPhotosBySelfie(selfie,folder);
-    console.log("wola !");
+    console.log("voila !");
     res.json(results);
     fs.rmSync(filePath)
 })

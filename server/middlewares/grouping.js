@@ -9,10 +9,6 @@ const config = require('../config/aws.config')
 const rekognition = new Rekognition({
     region: config.region,
 });
-const s3 = new S3({
-    region: config.region,
-});
-let bucket = `face-album-bucket`
 
 
 
@@ -41,15 +37,15 @@ let bucket = `face-album-bucket`
 
 let imageGroup = {}
 
-function setGroup(faceId,imageKey){
-    if(!imageGroup[faceId]){
+function setGroup(faceId, imageKey) {
+    if (!imageGroup[faceId]) {
         imageGroup[faceId] = [];
     }
     imageGroup[faceId].push(imageKey);
-    fs.writeFileSync(path.resolve(`./groups.json`),JSON.stringify(imageGroup));
+    fs.writeFileSync(path.resolve(`./groups.json`), JSON.stringify(imageGroup));
 }
 
-function getGroup(faceId){
+function getGroup(faceId) {
     return imageGroup[faceId];
 }
 
@@ -60,16 +56,16 @@ const path = require('path');
 
 module.exports = async function group(req, res, next) {
     let files = req.files;
-    console.log("------------------------",files);
+    console.log("------------------------", files);
     for (let i = 0; i < files.length; i++) {
         let file = files[i];
-        let resim = await s3.getObject({
-            Bucket: bucket,
-            Key: file.key
-        }).promise()
-        fs.writeFileSync(path.resolve(`seperate/before/${file.originalname}`), resim.Body);
-        await seperateFaces(path.resolve(`seperate/before/${file.originalname}`));
-        let seperatedFaces = fs.readdirSync(path.resolve(`seperate/after`)).filter(item => item.includes(file.originalname));
+        console.log("START SEPERATE");
+        let x = await seperateFaces(path.resolve(`seperate/before/${file.filename}`));
+        console.log("END SEPERATE");
+        let afterFiles = fs.readdirSync(path.resolve(`seperate/after`));
+        console.log("AFTER FİLES", afterFiles);
+        let seperatedFaces = afterFiles.filter(item => item.includes(file.filename));
+        console.log("SEPERATED FACES", seperatedFaces);
         for (let j = 0; j < seperatedFaces.length; j++) {
             let theFace = seperatedFaces[j];
             let theFaceBuffer = fs.readFileSync(path.resolve(`seperate/after/${theFace}`));
@@ -82,20 +78,26 @@ module.exports = async function group(req, res, next) {
             }).promise();
 
             console.log("which Face", whichFace);
-           
+
             if (whichFace.FaceMatches.length == 0) {
                 let indexing = await rekognition.indexFaces({
                     CollectionId: `hizlandirma`,
                     Image: {
                         Bytes: theFaceBuffer
-                    }}).promise();
+                    }
+                }).promise();
                 console.log("indexing", indexing);
                 seperatedFaces.push(theFace)
-            }else{
+            } else {
                 console.log("Tanıyom");
-                whichFace.FaceMatches[0].Face.FaceId ? setGroup(whichFace.FaceMatches[0].Face.FaceId,file.key) : null;
+                whichFace.FaceMatches[0].Face.FaceId ? setGroup(whichFace.FaceMatches[0].Face.FaceId, file.key) : null;
             }
-
+            console.log("THE FACE", theFace);
+        }
+        fs.unlinkSync(path.resolve(`seperate/before/${file.filename}`));
+        for (let j = 0; j < seperatedFaces.length; j++) {
+            let theFace = seperatedFaces[j];
+            fs.unlinkSync(path.resolve(`seperate/after/${theFace}`));
         }
     }
     next();
