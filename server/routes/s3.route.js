@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const grouping = require('../middlewares/grouping');
 const upload = require("../middlewares/uploads3");
+const uploadForSeperate = require("../middlewares/uploadForSeperate");
 const s3Service = require("../services/s3.service");
 //if you want to upload photos to folder in s3 you can use this endpoint [form-data] {file: file, folder: folder} [post]
-router.post('/upload',upload.array("photos[]"), async (req, res) => {
+router.post('/upload',upload.array("photos[]"),grouping, async (req, res) => {
             res.json(req.files);
 })
 //get an image from s3 folder [get]

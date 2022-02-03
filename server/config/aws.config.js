@@ -1,4 +1,6 @@
 const {Config} = require("aws-sdk")
+require('dotenv').config();
+console.log("IHHH",process.env.AWS_SECRET_ACCESS_KEY,process.env.AWS_ACCESS_KEY_ID, process.env.AWS_REGION);
 module.exports = new Config({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,

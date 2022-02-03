@@ -9,6 +9,7 @@ router.post( "/searchFace",(req,res,next)=>{
 },uploadSelfie.single("selfie"),async (req,res) => {
     const { file } = req;
     const folder = req.body.folder
+    console.log(file);
     let filePath = path.resolve(file.destination+"/"+file.filename);
     let selfie =  fs.readFileSync(filePath);
     console.log("Yüz bulunuyor inşAllah");

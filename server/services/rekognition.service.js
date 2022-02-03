@@ -1,4 +1,4 @@
-const { Rekognition, Service, Config, S3 } = require("aws-sdk");
+const { Rekognition, S3 } = require("aws-sdk");
 require('dotenv').config()
 const config = require('../config/aws.config')
 
@@ -7,15 +7,9 @@ const rekognition = new Rekognition({
     region: config.region,
 });
 
-// rekognition.createCollection({
-//     CollectionId:"mc-faces"
-// },(err,data)=>{
-//     if(err){
-//         console.log(err);
-//     }else{
-//         console.log(data);
-//     }
-// })
+
+
+
 // rekognition.listCollections({
 //     MaxResults:10,
 // },(err,data)=>{
@@ -96,7 +90,8 @@ let folder = "mastherchef"
 let bucket  = "face-album-bucket"
 let collectionId = folder+"-collection"
 let atesFaceId = "839575ed-f8e4-436f-ae3b-9f33ca24a647"
-let fs = require('fs')
+let fs = require('fs');
+const path = require("path");
 // rekognition.compareFaces({
 //     SourceImage:{
 //         S3Object:{
@@ -114,45 +109,22 @@ let fs = require('fs')
 //     console.log(data.FaceMatches.length);
 // })
 
-async function getPhotoKeys(folder){
-    let params = {
-        Bucket: bucket,
-        Prefix: folder
-    }
-    let data = await s3.listObjectsV2(params).promise()
-    let keys = data.Contents.map(item=>item.Key)
-    keys.shift();
-    return keys
-}
 
 async function searchPhotosBySelfie(photo,folder) {
-    let results = [];
     console.log(photo,folder);
-    try {
-        let allPhotos = await getPhotoKeys(folder);
-        for (let i = 0; i < allPhotos.length; i++) {
-            const item = allPhotos[i];
-            let result = await rekognition.compareFaces({
-                SourceImage: {
-                    Bytes:photo
-                },
-                TargetImage: {
-                    S3Object: {
-                        Bucket: bucket,
-                        Name: item
-                    }
-            }          
-            }).promise();
-            if(result.FaceMatches.length > 0) results.push(item);
+    let result = await rekognition.searchFacesByImage({
+        CollectionId: folder,
+        Image: {
+            Bytes: photo
         }
-    } catch (err) {
-        console.log(err);
-    }
-    console.log(results);
-    return results;
+    }).promise();
+    let faceId = result.FaceMatches[0].Face.FaceId;
+    let results = JSON.parse(fs.readFileSync(path.resolve(__dirname+"/../groups.json")));
+    let group = results[faceId];
+    return group;
 }
 
-module.exports = {searchPhotosBySelfie}
+module.exports = {searchPhotosBySelfie,rekognition}
 
 
 // s3.listObjectsV2({
@@ -289,7 +261,6 @@ module.exports = {searchPhotosBySelfie}
 // )
 
 //potential 8914a419-14fb-48b2-8773-19662c5d5504
-
 
 
 
