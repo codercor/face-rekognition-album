@@ -1,15 +1,12 @@
 const { Rekognition, S3 } = require("aws-sdk");
 require('dotenv').config()
 const config = require('../config/aws.config')
-
+const {getGroup} = require("../models/customer.model")
 //new rekognition
 const rekognition = new Rekognition({
     region: config.region,
 });
 
-
-let fs = require('fs');
-const path = require("path");
 
 
 async function searchPhotosBySelfie(photo,folder) {
@@ -21,9 +18,9 @@ async function searchPhotosBySelfie(photo,folder) {
         }
     }).promise();
     let faceId = result.FaceMatches[0].Face.FaceId;
-    let results = JSON.parse(fs.readFileSync(path.resolve(__dirname+"/../groups.json")));
-    let group = results[faceId];
-    return group;
+    let results = await getGroup(faceId);
+    console.log(results);
+    return results;
 }
 
 module.exports = {searchPhotosBySelfie,rekognition}

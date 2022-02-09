@@ -1,82 +1,87 @@
-const { DynamoDB } = require("aws-sdk");
+const dynamoose = require("dynamoose");
 
-const config = require("../config/aws.config");
+let AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+let AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+let AWS_REGION = process.env.AWS_REGION;
 
-let dynamoDb = new DynamoDB({
-    region: config.region,
+dynamoose.aws.sdk.config.update({
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    region: AWS_REGION,
+})
+
+const CustomerSchema = new dynamoose.Schema({
+    faceId: {
+        type: String,
+        hashKey: true
+    },
+    photos: {
+        type: Array,
+        schema: [String]
+    },
+    ttl: Number
+}, {
+    useDocumentTypes: true,
+    timestamps: true,
+    expires:{
+        attribute: "ttl",
+        ttl: 10000
+    }
 });
 
+const Customer = dynamoose.model("Customer", CustomerSchema)
 
-const setGroup = function(faceId, imageKey) {
-    //check if faceId exists in dynamoDB
-    let params = {
-        TableName: "groups",
-        Key: {
-            faceId: {
-                S: faceId,
-            },
-        },
-    };
-    //with promises
-    dynamoDb.getItem(params).promise().then(data => {
-        if (data.Item) {
-            //if exists, add imageKey to the group
-            let group = data.Item.group.SS;
-            group.push(imageKey);
-            let params = {
-                TableName: "groups",
-                Key: {
-                    faceId: {
-                        S: faceId,
-                    },
-                },
-                UpdateExpression: "set group = :group",
-                ExpressionAttributeValues: {
-                    ":group": {
-                        SS: group,
-                    },
-                },
-            };
-            dynamoDb.updateItem(params).promise();
+function getNowLinuxTimeStamp(){
+    //decreare 8 hours
+    let now = new Date();
+    now.setMinutes(now.getMinutes() + 5);
+    return Math.floor(now.getTime() / 1000);
+}
+
+console.log("linux time stamp", getNowLinuxTimeStamp());
+
+//get time for getNowLinuxTimeStamp() and add 2 minutes
+
+Customer.setGroup = function (faceId, imageKeys) {
+    if (typeof (imageKeys) === "string") imageKeys = [imageKeys];
+    Customer.get(faceId).then(data => {
+        if (!data) {
+            let newFace = new Customer({
+                faceId: faceId,
+                photos: imageKeys,
+                ttl: getNowLinuxTimeStamp()
+            });
+
+            newFace.save().then(data => {
+                console.log(data);
+                console.log("New Face Created");
+            }).catch(err => {
+                console.log(err);
+            })
         } else {
-            //if not exists, create new group
-            let params = {
-                TableName: "groups",
-                Item: {
-                    faceId: {
-                        S: faceId,
-                    },
-                    group: {
-                        SS: [imageKey],
-                    },
-                },
-            };
-            dynamoDb.putItem(params).promise();
+            let newPhotos = imageKeys.filter(imageKey => !data.photos.includes(imageKey))
+            data.photos = [...data.photos, ...newPhotos];
+            data.save().then(result => {
+                console.log("Photos Added to face", result);
+            }).catch(err => {
+                console.log(err);
+            })
         }
     });
-};
+}
 
 
-const getGroup = function(faceId) {
-    let params = {
-        TableName: "groups",
-        Key: {
-            faceId: {
-                S: faceId,
-            },
-        },
-    };
-    return dynamoDb.getItem(params).promise().then(data => {
-        if (data.Item) {
-            return data.Item.group.SS;
-        } else {
-            return [];
-        }
-    });
-};
+Customer.getGroup = async function (faceId) {
+    console.log("GET GROUP", faceId);
+    let face = await Customer.get(faceId);
+    return face?.photos || [];
+}
+
+//Customer.setGroup("0e0ada1d-d178-4e83-91c8-49fc450d44e3", []);
 
 
-module.exports = {
-    setGroup,
-    getGroup,
-};
+Customer.scan().exec().then(data => {
+    console.log(data.length);
+})
+
+module.exports = Customer;

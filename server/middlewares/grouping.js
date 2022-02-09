@@ -35,19 +35,9 @@ const rekognition = new Rekognition({
 //     console.log(data);
 // })
 
-let imageGroup = {}
 
-function setGroup(faceId, imageKey) {
-    if (!imageGroup[faceId]) {
-        imageGroup[faceId] = [];
-    }
-    imageGroup[faceId].push(imageKey);
-    fs.writeFileSync(path.resolve(`./groups.json`), JSON.stringify(imageGroup));
-}
+const {setGroup} = require('../models/customer.model');
 
-function getGroup(faceId) {
-    return imageGroup[faceId];
-}
 
 
 
