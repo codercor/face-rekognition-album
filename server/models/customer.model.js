@@ -80,8 +80,4 @@ Customer.getGroup = async function (faceId) {
 //Customer.setGroup("0e0ada1d-d178-4e83-91c8-49fc450d44e3", []);
 
 
-Customer.scan().exec().then(data => {
-    console.log(data.length);
-})
-
 module.exports = Customer;

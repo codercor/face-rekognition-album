@@ -1,8 +1,32 @@
 import { configureStore } from '@reduxjs/toolkit';
-import eventSlice from '../features/eventSlice';
+import { combineReducers } from 'redux';
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
+import thunk from 'redux-thunk';
 
-export const store = configureStore({
-  reducer: {
-    event: eventSlice
-  },
+import eventSlice from '../features/eventSlice';
+import userSlice from '../features/userSlice';
+import adminSlice from '../features/adminSlice';
+
+const reducers = combineReducers({
+  event: eventSlice,
+  user: userSlice,
+  admin: adminSlice,
 });
+
+
+const persistedReducer = persistReducer({
+  key: 'root',
+  storage,
+  whitelist: ['user']
+}, reducers);
+
+
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware: [thunk],
+});
+
+
+
+export default store;

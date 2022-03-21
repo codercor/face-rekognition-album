@@ -4,7 +4,7 @@ const fs = require('fs');
 module.exports.searchFace = async (req,res) => {
     const { file } = req;
     const folder = req.body.folder
-    console.log(file);
+    console.log("HABU FİLEEE",file,folder);
     let filePath = path.resolve(file.destination+"/"+file.filename);
     let selfie =  fs.readFileSync(filePath);
     console.log("Yüz bulunuyor inşAllah");

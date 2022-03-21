@@ -14,6 +14,8 @@ module.exports.login = (req, res) => {
         });
     }).catch(err => {
         console.log(err);
-        res.json(err);
+        res.status(500).json({
+            message: "Login failed"
+        });
     } )
 };

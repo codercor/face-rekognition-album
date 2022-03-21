@@ -7,21 +7,19 @@ import BgImage from '../assets/home-bg.svg'
 import FaceDraw from '../assets/face-draw.svg'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch,useSelector } from 'react-redux'
-import { setEvent } from '../features/eventSlice'
+//import {  } from '../features/eventSlice'
 export default function Home() {
     const [loading, setLoading] = React.useState(false);
-    const event = useSelector(state => state.event.event)
+    const [eventName,setEventName] = useState("");
     const handleClick = () => {
-        setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            navigate(`/event/${event}`);
+            navigate(`/event/${eventName}`);
         }, 1000);
     }
     const navigate = useNavigate()
-    const dispatch = useDispatch()
     const handleChange = (e) => {
-        dispatch(setEvent(e.target.value))
+        setEventName(e.target.value);
     }
 
     return (

@@ -1,15 +1,19 @@
 const eventModel = require('../models/event.model');
+const { createCollection } = require('../services/rekognition.service')
 
 module.exports.createEvent = async (req, res) => {
     const { name, backgroundImage, isPaid } = req.body;
+    console.log(req.body);
     try {
         const event = await eventModel.createEvent(
             name,
             backgroundImage,
-            isPaid
+            eval(isPaid)
         )
+        await createCollection(name);
         res.json(event)
     }catch (error) {
+        console.log(error);
         res.status(500).json(error)
     }
 }
@@ -54,5 +58,7 @@ module.exports.deleteEvent = async (req, res) => {
 }
 
 module.exports.uploadBackgroundImage = async (req, res) => {
+    console.log("request");
+    console.log(req.file);
     res.json({filename:req.file.filename})
 }

@@ -1,3 +1,5 @@
 minifier/
 *.jpg
 *.jpeg
+node_modules/
+minifier/

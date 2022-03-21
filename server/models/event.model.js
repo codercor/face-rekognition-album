@@ -64,8 +64,10 @@ Event.updateOne = function (event) {
 }
 
 
-Event.getOneByName = function (name) {
-    return Event.scan().filter("name", "=", name).exec();
+Event.getOneByName = async function (name) {
+    let result = await Event.scan("name").eq(name).exec();
+    console.log(result);
+    return result;
 }
 
 Event.getAll = function () {

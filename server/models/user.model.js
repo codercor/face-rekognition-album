@@ -40,10 +40,6 @@ const UserSchema = new dynamoose.Schema({
 const User = dynamoose.model("User", UserSchema)
 
 
-User.scan().exec().then(data => {
-    console.log(data.length);
-})
-
 User.roles = ["admin", "user","uploader"];
 
 User.newUser = function (name, username, password, phone, role) {
@@ -77,7 +73,7 @@ User.login = async function (username, password) {
             "eq": password
         }
     }).exec();
-    if(result[0].count === 0){
+    if(result.count  === 0){
         return Promise.reject("Username or password is incorrect");
     }else{
         return result[0];
