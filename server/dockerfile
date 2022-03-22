@@ -1,0 +1,15 @@
+FROM node:alpine as builder
+
+## Install build toolchain, install node deps and compile native add-ons
+RUN apk add --no-cache python3 make g++
+COPY . /app
+WORKDIR /app
+RUN npm install
+
+FROM node:alpine as app
+
+## Copy built node modules and binaries without including the toolchain
+COPY --from=builder node_modules .
+
+ENTRYPOINT ["npm", "run"]
+CMD ["start"]

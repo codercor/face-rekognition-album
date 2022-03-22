@@ -46,6 +46,7 @@ const path = require('path');
 
 module.exports = async function group(req, res, next) {
     let files = req.files;
+    let collectionId = req.body.folder;
     console.log("------------------------", files);
     for (let i = 0; i < files.length; i++) {
         let file = files[i];
@@ -53,25 +54,31 @@ module.exports = async function group(req, res, next) {
         let x = await seperateFaces(path.resolve(`seperate/before/${file.filename}`));
         console.log("END SEPERATE");
         let afterFiles = fs.readdirSync(path.resolve(`seperate/after`));
+        //delete the text.txt file
+        afterFiles = afterFiles.filter(file => file !== "placeholder");
         console.log("AFTER FİLES", afterFiles);
         let seperatedFaces = afterFiles.filter(item => item.includes(file.filename));
         console.log("SEPERATED FACES", seperatedFaces);
         for (let j = 0; j < seperatedFaces.length; j++) {
             let theFace = seperatedFaces[j];
             let theFaceBuffer = fs.readFileSync(path.resolve(`seperate/after/${theFace}`));
-            let whichFace = await rekognition.searchFacesByImage({
-                CollectionId: `hizlandirma`,
-                FaceMatchThreshold: 70,
-                Image: {
-                    Bytes: theFaceBuffer
-                },
-            }).promise();
-
-            console.log("which Face", whichFace);
-
+            let whichFace;
+            try {
+                whichFace = await rekognition.searchFacesByImage({
+                    CollectionId: collectionId,
+                    FaceMatchThreshold: 70,
+                    Image: {
+                        Bytes: theFaceBuffer
+                    },
+                }).promise();
+            } catch (error) {
+                console.log("YÜZ İNDEXLEME HATASI", error);
+                continue;
+            }
+           
             if (whichFace.FaceMatches.length == 0) {
                 let indexing = await rekognition.indexFaces({
-                    CollectionId: `hizlandirma`,
+                    CollectionId: collectionId,
                     Image: {
                         Bytes: theFaceBuffer
                     }
@@ -87,7 +94,12 @@ module.exports = async function group(req, res, next) {
         fs.unlinkSync(path.resolve(`seperate/before/${file.filename}`));
         for (let j = 0; j < seperatedFaces.length; j++) {
             let theFace = seperatedFaces[j];
-            fs.unlinkSync(path.resolve(`seperate/after/${theFace}`));
+            console.log("BURAYA GELDI");
+            try {
+                fs.unlinkSync(path.resolve(`seperate/after/${theFace}`));
+            } catch (error) {
+                console.log("AFTER SİLME HATASI :"+theFace);
+            }
         }
     }
     next();

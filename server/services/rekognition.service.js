@@ -9,20 +9,58 @@ const rekognition = new Rekognition({
     region: config.region,
 });
 
+async function cleanAllCollections(){
+    const collections = await rekognition.listCollections().promise();
+
+    for (let index = 0; index < collections.length; index++) {
+        const element = collections[index];
+        rekognition.deleteCollection({
+            CollectionId: element
+        }, (err, data) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(data);
+            }
+        });
+    }
+}
+
+
 function createCollection(collectionId){
     return rekognition.createCollection({
         CollectionId: collectionId
     }).promise();
 }
 
+rekognition.listFaces({
+    CollectionId: "my-event-example",
+}).promise()
+.then(data => {
+    console.log(data);
+})
+
 async function searchPhotosBySelfie(photo,folder) {
     console.log(photo,folder);
-    let result = await rekognition.searchFacesByImage({
+    rekognition.listFaces({
         CollectionId: folder,
-        Image: {
-            Bytes: photo
-        }
-    }).promise();
+    }).promise()
+    .then(data => {
+        console.log(data);
+    })
+    let result
+    try {
+        result = await rekognition.searchFacesByImage({
+            CollectionId: folder,
+            Image: {
+                Bytes: photo
+            }
+        }).promise();
+        console.log("RESULT BU RESULT",result);
+    } catch (error) {
+        console.log("Yüz yok",error);
+    }
+  
     if(result.FaceMatches.length > 0){
         let faceId = result.FaceMatches[0].Face.FaceId;
         let results = await getGroup(faceId);
