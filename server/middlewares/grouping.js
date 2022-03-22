@@ -87,7 +87,7 @@ module.exports = async function group(req, res, next) {
                 seperatedFaces.push(theFace)
             } else {
                 console.log("Tanıyom");
-                whichFace.FaceMatches[0].Face.FaceId ? setGroup(whichFace.FaceMatches[0].Face.FaceId, file.key) : null;
+                whichFace.FaceMatches[0].Face.FaceId ? await setGroup(whichFace.FaceMatches[0].Face.FaceId, file.key) : null;
             }
             console.log("THE FACE", theFace);
         }

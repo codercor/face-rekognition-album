@@ -10,7 +10,7 @@ module.exports.createEvent = async (req, res) => {
             backgroundImage,
             eval(isPaid)
         )
-        await createCollection(name);
+       await createCollection(name);
         res.json(event)
     }catch (error) {
         console.log(error);

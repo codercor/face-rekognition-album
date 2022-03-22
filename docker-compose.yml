@@ -1,0 +1,27 @@
+version: '3'
+services:
+  postgres_db:
+    image: postgres
+    volumes:
+    - db-data:/var/lib/postgresql/data
+    ports:
+    - 5432:5432
+    env_file:
+      - ./server/.env
+    networks:
+      - reko-net
+  fradevserver:
+    image: fra-dev-server
+    volumes:
+      - /Users/codercor/Documents/GitHub/face-rekognition-album/server:/server-app
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres_db
+    networks:
+      - reko-net
+volumes:
+  db-data:
+networks:
+  reko-net:
+    driver: bridge
