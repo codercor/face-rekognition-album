@@ -26,12 +26,14 @@ Customer.init(
       defaultValue: Sequelize.NOW,
       allowNull: false,
     },
-    timestamps: false,
+    timestamps: true,
     // Other model options go here
     sequelize, // We need to pass the connection instance
     modelName: "Customer", // We need to choose the model name
   }
 );
+
+//Customer.sync({force: true});
 
 // the defined model is the class itself
 console.log(Customer === sequelize.models.Customer); // true

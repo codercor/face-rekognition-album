@@ -1,77 +1,75 @@
-const dynamoose = require("dynamoose");
-const uuid = require('uuid');
+const uuid = require("uuid");
+//migrate to sequelize
+const sequelize = require("../config/database.config");
 
-let AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
-let AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
-let AWS_REGION = process.env.AWS_REGION;
+const { Sequelize, DataTypes, Model } = require("sequelize");
 
-dynamoose.aws.sdk.config.update({
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    region: AWS_REGION,
-})
+class Event extends Model {}
 
-const EventSchema = new dynamoose.Schema({
-    id:{
-        type: String,
-        hashKey: true,
-        default: uuid.v4()  
-    },
+Event.init(
+  {
+    // Model attributes are defined here
     name: {
-        type: String,
-        required: true
+      type: DataTypes.STRING,
+      unique: true,
     },
     backgroundImage: {
-        type: String,
-        required: true
+      type: DataTypes.STRING,
+      unique: true,
     },
     isPaid: {
-        type: Boolean,
-        required: true
-    }
-});
+      type: DataTypes.BOOLEAN,
+      unique: true,
+    },
+  },
+  {
+    created_date: {
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
+      allowNull: false,
+    },
+    updated_date: {
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
+      allowNull: false,
+    },
+    sequelize,
+  }
+);
 
-const Event = dynamoose.model("Event", EventSchema)
+//Event.sync({ force: true });
 
-
-
-Event.types = ["paid","free"];
-
-Event.createEvent = function (name,backgroundImage,isPaid) {
-    let newEvent = new Event({
-        name,
-        backgroundImage,
-        isPaid
-    });
-    return newEvent.save();
-}
+Event.createEvent = function (name, backgroundImage, isPaid) {
+  let newEvent = Event.create({
+    name,
+    backgroundImage,
+    isPaid,
+  });
+  return newEvent;
+};
 
 Event.deleteOne = function (id) {
-    return Event.delete(id);
-}
+  return Event.deleteOne({ id });
+};
 
 Event.deleteOneByName = function (name) {
-    return Event.scan().filter("name", "=", name).exec()
-}
-
-
-
+  return Event.deleteOne({ name });
+};
 
 Event.updateOne = function (event) {
-    let id = event.id;
-    delete event.id;
-    return Event.update(id, event);
-}
-
+  let id = event.id;
+  delete event.id;
+  return Event.update(event, { where: { id } });
+};
 
 Event.getOneByName = async function (name) {
-    let result = await Event.scan("name").eq(name).exec();
-    console.log(result);
-    return result;
-}
+  let result = await Event.findOne({ where: { name } });
+  console.log(result);
+  return result;
+};
 
 Event.getAll = function () {
-    return Event.scan().exec();
-}
+  return Event.findAll({});
+};
 
 module.exports = Event;
