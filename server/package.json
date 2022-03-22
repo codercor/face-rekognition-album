@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/codercor/face-album#readme",
   "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.10",
     "aws-sdk": "^2.1010.0",
     "canvas": "^2.9.1",
     "cors": "^2.8.5",
@@ -30,6 +31,8 @@
     "multer-s3": "^2.10.0",
     "passport": "^0.5.0",
     "passport-jwt": "^4.0.0",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.17.0",
     "sh": "^0.0.3",
     "sharp": "^0.30.3",

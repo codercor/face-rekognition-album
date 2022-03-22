@@ -9,22 +9,41 @@ const rekognition = new Rekognition({
     region: config.region,
 });
 
-async function cleanAllCollections(){
-    const collections = await rekognition.listCollections().promise();
+// rekognition.createCollection({
+//     CollectionId: "my-event-example"
+// }, (err, data) => {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(data);
+//     }
+// });
 
+
+async function cleanAllCollections(){
+    const collections = (await rekognition.listCollections().promise()).CollectionIds;
     for (let index = 0; index < collections.length; index++) {
         const element = collections[index];
-        rekognition.deleteCollection({
+        await rekognition.deleteCollection({
             CollectionId: element
-        }, (err, data) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(data);
-            }
-        });
+        }).promise();
     }
 }
+
+const  resetCollections = async () => {
+    await cleanAllCollections();
+    await createCollection("my-event-example");
+    console.log("collection resfreshed");
+}
+
+//resetCollections();
+
+// cleanAllCollections().then(()=>{
+//     console.log("done")
+// }).catch(err=>{
+//     console.log(err)
+// })
+
 
 
 function createCollection(collectionId){
@@ -33,12 +52,6 @@ function createCollection(collectionId){
     }).promise();
 }
 
-rekognition.listFaces({
-    CollectionId: "my-event-example",
-}).promise()
-.then(data => {
-    console.log(data);
-})
 
 async function searchPhotosBySelfie(photo,folder) {
     console.log(photo,folder);
@@ -60,7 +73,7 @@ async function searchPhotosBySelfie(photo,folder) {
     } catch (error) {
         console.log("Yüz yok",error);
     }
-  
+
     if(result.FaceMatches.length > 0){
         let faceId = result.FaceMatches[0].Face.FaceId;
         let results = await getGroup(faceId);
@@ -69,7 +82,7 @@ async function searchPhotosBySelfie(photo,folder) {
     }else{
         return [];
     }
- 
+
 }
 
 module.exports = {searchPhotosBySelfie,rekognition,createCollection}
