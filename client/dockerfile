@@ -1,0 +1,8 @@
+FROM alpine
+# install packages for run react
+RUN apk add nodejs npm yarn
+COPY . /client-app
+WORKDIR /client-app
+RUN npm install
+
+CMD ["npm", "start"]

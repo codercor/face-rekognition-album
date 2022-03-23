@@ -2,10 +2,10 @@ import axios from 'axios';
 //const store = require("../app/store");
 
 
-
+export const baseURL = "http://localhost:3001";
 
 const instance = axios.create({
-    baseURL: 'http://localhost:3000/'
+    baseURL
 });
 
 //read token from redux

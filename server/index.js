@@ -15,6 +15,6 @@ app.use('/event',routes.eventRouter);
 
 
 
-app.listen(3000, () => {
+app.listen(3001, () => {
   console.log('listening on port 3000 -> http://localhost:3000');
 });

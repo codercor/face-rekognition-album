@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Rekognition, S3 } = require('aws-sdk')
 const config = require('../config/aws.config')
 
+const EventModel = require('../models/event.model');
 
 
 
@@ -47,6 +48,15 @@ const path = require('path');
 module.exports = async function group(req, res, next) {
     let files = req.files;
     let collectionId = req.body.folder;
+    let eventId;
+    try {
+        eventId = await EventModel.getEventIdByName(collectionId);
+    } catch (error) {
+        res.status(500).json({
+            message: "Event bulunamadı",
+            error
+        });
+    }
     console.log("------------------------", files);
     for (let i = 0; i < files.length; i++) {
         let file = files[i];
@@ -87,7 +97,7 @@ module.exports = async function group(req, res, next) {
                 seperatedFaces.push(theFace)
             } else {
                 console.log("Tanıyom");
-                whichFace.FaceMatches[0].Face.FaceId ? await setGroup(whichFace.FaceMatches[0].Face.FaceId, file.key) : null;
+                whichFace.FaceMatches[0].Face.FaceId ? await setGroup(whichFace.FaceMatches[0].Face.FaceId, file.key, eventId) : null;
             }
             console.log("THE FACE", theFace);
         }

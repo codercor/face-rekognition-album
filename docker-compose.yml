@@ -15,9 +15,19 @@ services:
     volumes:
       - /Users/codercor/Documents/GitHub/face-rekognition-album/server:/server-app
     ports:
-      - 3000:3000
+      - 3001:3001
     depends_on:
       - postgres_db
+    networks:
+      - reko-net
+  fradevclient:
+    image: fra-dev-client
+    volumes:
+      - /Users/codercor/Documents/GitHub/face-rekognition-album/client:/client-app
+    ports:
+      - 3000:3000 # left side is the container port, right side is the host port
+    depends_on:
+      - fradevserver
     networks:
       - reko-net
 volumes:

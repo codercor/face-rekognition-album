@@ -19,8 +19,9 @@ Event.init(
     },
     isPaid: {
       type: DataTypes.BOOLEAN,
-      unique: true,
+      unique: false,
     },
+   
   },
   {
     created_date: {
@@ -33,7 +34,10 @@ Event.init(
       defaultValue: Sequelize.NOW,
       allowNull: false,
     },
+    charset: "utf8",
+    collate: "utf8_general_ci",
     sequelize,
+    modelName: "Event"
   }
 );
 
@@ -70,6 +74,11 @@ Event.getOneByName = async function (name) {
 
 Event.getAll = function () {
   return Event.findAll({});
+};
+
+Event.getEventIdByName = async function (name) {
+  let result = await Event.findOne({ where: { name } });
+  return result.id;
 };
 
 module.exports = Event;

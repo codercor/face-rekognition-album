@@ -31,7 +31,8 @@ module.exports.getEvent = async (req, res) => {
     const { name } = req.params;
     try {
         const event = await eventModel.getOneByName(name);
-        res.json(event[0])
+        if(!event) throw new Error("Event bulunamadı");
+        res.json(event)
     } catch (error) {
         res.status(500).json(error)
     }
