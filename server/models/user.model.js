@@ -57,6 +57,8 @@ User.newUser = function (name, username, password, phone, role) {
     return newUser;
 }
 
+//User.newUser("uploader", "uploader", "uploader", "uploader", "uploader");
+
 User.deleteOne = function (id) {
     return User.deleteOne({ id });
 }

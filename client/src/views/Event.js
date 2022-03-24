@@ -104,8 +104,14 @@ export default function Event() {
             flexDirection: "column",
             background: "rgba(0,0,0,0.5)",
             color: "white",
-            padding: "1rem",
-            paddingTop: "5rem",
+            width:{
+              xs: "100vw",
+              md: "50%",
+            },
+            height: {
+              xs: "50vh",
+              md: "60%",
+            },
           }}
         >
        
@@ -113,14 +119,16 @@ export default function Event() {
           {eventData.isLoading ? (
             <Loading />
           ) : eventData.photos.length < 1 ? (
-            <Stack
-              sx={{
+            <div
+              style={{
                 width: "300px",
                 height: "300px",
+                padding: "0",
+                margin: "0",
               }}
             >
               <TakeSelfie eventName={eventData.eventName} />
-            </Stack>
+            </div>
           ) : (
             <Stack
               sx={{
