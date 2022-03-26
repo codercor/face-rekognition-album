@@ -4,6 +4,8 @@ const sequelize = require("../config/database.config");
 
 const { Sequelize, DataTypes, Model } = require("sequelize");
 
+const Customer = require("./customer.model");
+
 class Event extends Model {}
 
 Event.init(
@@ -21,7 +23,11 @@ Event.init(
       type: DataTypes.BOOLEAN,
       unique: false,
     },
-   
+    ownerId:{
+      type: DataTypes.INTEGER,
+      unique: false,
+      defaultValue: 1,
+    }
   },
   {
     created_date: {
@@ -40,24 +46,30 @@ Event.init(
     modelName: "Event"
   }
 );
-
+Event.hasMany(Customer,{
+  as: "Customers",
+  foreignKey: "eventId",
+  useJunctionTable: false,
+  onDelete: "CASCADE",
+});
 //Event.sync({ force: true });
 
-Event.createEvent = function (name, backgroundImage, isPaid) {
+Event.createEvent = function (name, backgroundImage, isPaid, ownerId) {
   let newEvent = Event.create({
     name,
     backgroundImage,
     isPaid,
+    ownerId,
   });
   return newEvent;
 };
 
 Event.deleteOne = function (id) {
-  return Event.deleteOne({ id });
+  return Event.destroy({ where: { id } });
 };
 
 Event.deleteOneByName = function (name) {
-  return Event.deleteOne({ name });
+  return Event.destroy({ where: { name } });
 };
 
 Event.updateOne = function (event) {
@@ -80,5 +92,6 @@ Event.getEventIdByName = async function (name) {
   let result = await Event.findOne({ where: { name } });
   return result.id;
 };
+
 
 module.exports = Event;

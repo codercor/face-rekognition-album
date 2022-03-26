@@ -1,7 +1,7 @@
 const sequelize = require("../config/database.config");
 
 const { Sequelize, DataTypes, Model } = require("sequelize");
-
+const Event = require("./event.model");
 class Customer extends Model {}
 
 Customer.init(
@@ -32,7 +32,6 @@ Customer.init(
     modelName: "Customer", // We need to choose the model name
   }
 );
-Customer.belongsTo(require("./event.model"));
 //Customer.sync({force: true});
 
 

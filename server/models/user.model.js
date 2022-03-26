@@ -2,6 +2,8 @@ const sequelize = require("../config/database.config");
 
 const { Sequelize, DataTypes, Model } = require("sequelize");
 
+const Event = require("./event.model");
+
 class User extends Model {}
 
 User.init(
@@ -45,38 +47,30 @@ User.init(
       allowNull: false,
     },
     sequelize,
+    modelName: "User"
   }
 );
+
+//User.sync({ force: true });
 
 User.roles = ["root", "admin", "user", "uploader"];
 
 User.hasMany(User, {
-    as: "Children",
+    as: "Personnel",
     foreignKey: "ownerId",
     useJunctionTable: false,
 });
+User.hasMany(Event,{
+  as: "Events",
+  foreignKey: "ownerId",
+  useJunctionTable: false,
+})
 
-//User.sync({ force: true});
 
-User.findAll({}).then(users => console.log(users.map(user => user.dataValues)));
-
-
-
-async function testData() {
-    const user4 = User.create({ name: "user4", username: "user4", password: "user4", phone: "user4", role: "user",ownerId:2 });
-}
-
-//testData();
 
 User.deleteById = function (id) {
   return User.destroy({ where: { id } });
 };
-
-//User.deleteById(2)
-
-// User.updateOne = function (user) {
-//     return User.updateOne({ id: user.id }, user);
-// }
 
 User.newUser = function (name, username, password, phone, role, ownerId) {
     if (User.roles.indexOf(role) === -1) {
@@ -114,7 +108,5 @@ User.getOne = function (id) {
     },
   });
 };
-
-//User.newUser("Selami","selo","selo123.","+923232323232","admin");
 
 module.exports = User;
