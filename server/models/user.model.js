@@ -30,10 +30,10 @@ User.init(
       unique: false,
     },
     ownerId: {
-        type: DataTypes.INTEGER,
-        unique: false,
-        defaultValue: 1,
-    }
+      type: DataTypes.INTEGER,
+      unique: false,
+      defaultValue: 1,
+    },
   },
   {
     created_date: {
@@ -47,7 +47,7 @@ User.init(
       allowNull: false,
     },
     sequelize,
-    modelName: "User"
+    modelName: "User",
   }
 );
 
@@ -56,36 +56,34 @@ User.init(
 User.roles = ["root", "admin", "user", "uploader"];
 
 User.hasMany(User, {
-    as: "Personnel",
-    foreignKey: "ownerId",
-    useJunctionTable: false,
+  as: "Personnel",
+  foreignKey: "ownerId",
+  useJunctionTable: false,
 });
-User.hasMany(Event,{
+User.hasMany(Event, {
   as: "Events",
   foreignKey: "ownerId",
   useJunctionTable: false,
-})
-
-
+});
 
 User.deleteById = function (id) {
   return User.destroy({ where: { id } });
 };
 
 User.newUser = function (name, username, password, phone, role, ownerId) {
-    if (User.roles.indexOf(role) === -1) {
-      return Promise.reject("Role is not valid");
-    }
-    let newUser = User.create({
-      name,
-      username,
-      password,
-      phone,
-      role,
-      ownerId,
-    });
-    return newUser;
-  };
+  if (User.roles.indexOf(role) === -1) {
+    return Promise.reject("Role is not valid");
+  }
+  let newUser = User.create({
+    name,
+    username,
+    password,
+    phone,
+    role,
+    ownerId,
+  });
+  return newUser;
+};
 
 User.login = async function (username, password) {
   let result = await User.findOne({
@@ -108,5 +106,7 @@ User.getOne = function (id) {
     },
   });
 };
+
+// User.findAll({}).then((users) => { console.log(users.map((user)=>user.get())) });
 
 module.exports = User;

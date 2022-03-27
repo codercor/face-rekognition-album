@@ -12,7 +12,7 @@ app.use('/s3', routes.s3Router);
 app.use('/rekognition',routes.rekognitionRouter);
 app.use('/auth',routes.authRouter);
 app.use('/event',routes.eventRouter);
-
+app.use('/user',routes.userRouter);
 
 
 app.listen(3001, () => {
