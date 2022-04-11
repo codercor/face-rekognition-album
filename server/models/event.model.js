@@ -5,7 +5,6 @@ const sequelize = require("../config/database.config");
 const { Sequelize, DataTypes, Model, Op } = require("sequelize");
 
 const Customer = require("./customer.model");
-const User = require("./user.model");
 
 class Event extends Model {}
 

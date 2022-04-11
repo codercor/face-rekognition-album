@@ -62,6 +62,12 @@ User.hasMany(User, {
   useJunctionTable: false,
 });
 
+User.hasMany(Event,{
+  as: "Events",
+  foreignKey: "ownerId",
+  useJunctionTable: false,
+})
+
 User.deleteById = function (id) {
   return User.destroy({ where: { id } });
 };

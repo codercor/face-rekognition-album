@@ -3,3 +3,4 @@ minifier/
 *.jpeg
 node_modules/
 minifier/
+server/log.json
