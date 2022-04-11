@@ -2,9 +2,10 @@ const uuid = require("uuid");
 //migrate to sequelize
 const sequelize = require("../config/database.config");
 
-const { Sequelize, DataTypes, Model } = require("sequelize");
+const { Sequelize, DataTypes, Model, Op } = require("sequelize");
 
 const Customer = require("./customer.model");
+const User = require("./user.model");
 
 class Event extends Model {}
 
@@ -52,6 +53,7 @@ Event.hasMany(Customer,{
   useJunctionTable: false,
   onDelete: "CASCADE",
 });
+
 //Event.sync({ force: true });
 
 Event.createEvent = function (name, backgroundImage, isPaid, ownerId) {
@@ -93,5 +95,14 @@ Event.getEventIdByName = async function (name) {
   return result.id;
 };
 
+Event.getEventsByUser = async function (user) {
+  //find all event userId or ownerId
+  let result =  await Event.findAll({
+    where: {
+      [Op.or]: [{ ownerId: user.id }, { ownerId: user.ownerId }],
+    },
+  });
+  return result;
+}
 
 module.exports = Event;

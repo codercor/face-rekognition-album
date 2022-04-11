@@ -1,10 +1,11 @@
 const sequelize = require("../config/database.config");
 
 const { Sequelize, DataTypes, Model } = require("sequelize");
-
 const Event = require("./event.model");
 
+
 class User extends Model {}
+
 
 User.init(
   {
@@ -60,11 +61,6 @@ User.hasMany(User, {
   foreignKey: "ownerId",
   useJunctionTable: false,
 });
-User.hasMany(Event, {
-  as: "Events",
-  foreignKey: "ownerId",
-  useJunctionTable: false,
-});
 
 User.deleteById = function (id) {
   return User.destroy({ where: { id } });
@@ -106,7 +102,6 @@ User.getOne = function (id) {
     },
   });
 };
-
-// User.findAll({}).then((users) => { console.log(users.map((user)=>user.get())) });
+//User.findAll({}).then((users) => { console.log(users.map((user)=>user.get())) });
 
 module.exports = User;

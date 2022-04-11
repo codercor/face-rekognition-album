@@ -23,4 +23,5 @@ router.use(roleCheckMiddleware(["root", "admin"]));
 
 router.route("/createUser").post(canCreateMiddleware,userController.createUser);
 
+
 module.exports = router;

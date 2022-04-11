@@ -63,3 +63,13 @@ module.exports.uploadBackgroundImage = async (req, res) => {
     console.log(req.file);
     res.json({filename:req.file.filename})
 }
+
+module.exports.getUserEvents = async (req, res) => {
+    try {
+        const events = await eventModel.getEventsByUser(req.user);
+        res.status(200).json(events);
+    } catch (err) {
+        console.log("Get events error: ", err);
+        res.status(500).json(err);
+    }
+}

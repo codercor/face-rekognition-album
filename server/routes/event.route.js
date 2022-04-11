@@ -8,9 +8,11 @@ router.route('/').get(checkToken,eventController.getEvents).post(checkToken,even
 
 router.route('/uploadBG').post(checkToken,uploadBackgroundImage.single("image"),eventController.uploadBackgroundImage);
 
+router.route('/userEvents').get(checkToken,eventController.getUserEvents);
 router.route('/:name')
 .get(eventController.getEvent)
 .delete(checkToken,eventController.deleteEvent)
 .put(checkToken,eventController.updateEvent);
+
 
 module.exports = router;
