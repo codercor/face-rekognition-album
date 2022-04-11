@@ -1,6 +1,17 @@
-import { Box, Button, Divider, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
+  IconButton,
+} from "@mui/material";
 import React from "react";
 import UplodActionButtons from "./UplodActions";
+import { Info as InfoIcon } from '@mui/icons-material'
+
+import { setSelectedPhotos } from '../../../features/uploaderSlice'
+import {useDispatch, useSelector} from "react-redux";
 
 const boxStyle = {
   width: "100%",
@@ -14,12 +25,20 @@ const boxStyle = {
   overflow: "auto",
 };
 
+
 export default function Upload() {
   const [selectedImages, setSelectedImages] = React.useState([]);
+  const dispatch = useDispatch();
+  const selectedPhotos = useSelector(state => state.uploader.selectedPhotos);
+  console.log(selectedPhotos);
+  const uploadedPhotos = useSelector(state => state.uploader.uploadedPhotos);
+  const handleSetSelectedPhotos = (data)=>{
+    dispatch(setSelectedPhotos(data));
+  }
   return (
     <Box sx={boxStyle}>
       <Grid container>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <Box
             sx={{
               ...boxStyle,
@@ -30,35 +49,35 @@ export default function Upload() {
             <Grid container>
               <Grid item xs={12}>
                 <UplodActionButtons
-                  selectedImages={selectedImages}
-                  setSelectedImages={setSelectedImages}
+                  selectedImages={selectedPhotos}
+                  setSelectedImages={handleSetSelectedPhotos}
                 />
               </Grid>
               <Grid item xs={12} container>
-                {selectedImages.length > 0 &&
-                  selectedImages.map((item, i) => (
-                    <Grid item xs={3}>
-                      {" "}
-                      <Box sx={{
-                        width: "100%",
-                        height: "80px",
-                        background: "rgba(0,0,0,0.2)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }} key={i}>
-                        <img
-                          src={item.src}
-                          style={{ height:"100%" }}
+                <ImageList cols={3}  variant="masonry">
+                  {selectedPhotos.length > 0 &&
+                    selectedPhotos.map((item, i) => (
+                      <ImageListItem key={item.file.name} >
+                        <img src={item.src}  />
+                        <ImageListItemBar
+                          title="Yüklenme Hazır"
+                          subtitle={"5 kişi tanımlandı"}
+                          actionIcon={
+                            <IconButton
+                              sx={{ color: "rgba(255, 255, 255, 0.54)" }}
+                              aria-label={`info about ${item.title}`}
+                            >
+                              <InfoIcon />
+                            </IconButton>
+                          }
                         />
-                      </Box>{" "}
-                    </Grid>
-                  ))}
+                      </ImageListItem>
+                    ))}
+                </ImageList>
               </Grid>
             </Grid>
           </Box>
         </Grid>
-        <Grid item xs={6}></Grid>
       </Grid>
     </Box>
   );

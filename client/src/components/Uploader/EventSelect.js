@@ -7,15 +7,23 @@ import {
 } from "@mui/material";
 import React from "react";
 
+import {fetchAvailableEvents,setSelectedEvent} from '../../features/uploaderSlice'
+import { useDispatch,useSelector } from "react-redux";
+
 export default function Home() {
   const [eventCodeTyped, setEventCodeTyped] = React.useState("");
   const handleEventCodeTyped = (event) => {
     setEventCodeTyped(event.target.value);
   };
 
-  const availableEvents = ["cenga-bulusma", "sunnet-dugunu", "kahvaltı"];
-  // availableEvents comes from the server for admin's events
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(fetchAvailableEvents())
+  },[]);
 
+  const availableEvents = useSelector(state => state.uploader.availableEvents.map(event => event.name));
+  // availableEvents comes from the server for admin's events
+  
 
   const [eventTips, setEventTips] = React.useState([]);
 
@@ -27,6 +35,10 @@ export default function Home() {
         availableEvents.filter((event) => event.startsWith(eventCodeTyped))
       );
   }, [eventCodeTyped]);
+
+  const handleLockAndSelect = ()=>{
+    dispatch(setSelectedEvent(eventCodeTyped))
+  }
 
   const EventNameTip = ({ eventName }) => (
     <Box
@@ -91,6 +103,8 @@ export default function Home() {
               justifyContent: "center",
               flexDirection: "column",
             }}
+            onClick={handleLockAndSelect}
+             
              color="error" variant="contained"
              disabled={!availableEvents.includes(eventCodeTyped)}
             > 

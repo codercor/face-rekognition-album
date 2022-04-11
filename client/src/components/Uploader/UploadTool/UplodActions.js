@@ -6,6 +6,10 @@ import {
   mdiDeleteVariant as deleteIcon,
   mdiCloudUpload as uploadIcon,
 } from "@mdi/js";
+
+import { useDispatch,useSelector } from "react-redux";
+import { uploadSelectedPhotos } from "../../../features/uploaderSlice";
+
 export default function UplodActionButtons({
   selectedImages,
   setSelectedImages,
@@ -14,23 +18,51 @@ export default function UplodActionButtons({
   const handleFileSelectClick = () => {
     fileInputRef.current.click();
   };
+  const dispatch = useDispatch();
+  const selectedPhotos = useSelector(state => state.uploader.selectedPhotos);
+  const selectedEvent = useSelector(state => state.uploader.selectedEvent);
 
+  const [isCanUpload, setIsCanUpload] = React.useState(false);
   
   const handleFileInputChange = (e) => {
     setSelectedImages([])
+    setIsCanUpload(false);
     const files = e.target.files;
+    const photosData = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const reader = new FileReader();
       reader.onload = () => {
-        setSelectedImages((prev) => [...prev, { file, src: reader.result }]);
+        photosData.push({
+          file,
+          src: reader.result,
+        });
       };
       reader.readAsDataURL(file);
     }
+    const readPhotos = new Promise((resolve, reject) => {
+     const interval = setInterval(() => {
+        if (photosData.length === files.length) {
+          resolve(photosData);
+          clearInterval(interval);
+          setIsCanUpload(true);
+        }
+      });
+    })
+    readPhotos.then((data) => {
+      setSelectedImages(data);
+    });
   };
   const DeleteAllHandler = () => {
     setSelectedImages([]);
+    setIsCanUpload(false);
   }
+
+  const handleUploadPhotos = () => {
+    const photos = selectedPhotos.map((item) => item.file);
+    dispatch(uploadSelectedPhotos({photos, selectedEvent}));
+  }
+
   return (
     <Grid container alignContent="flex-start">
       
@@ -81,7 +113,8 @@ export default function UplodActionButtons({
         flexDirection="row"
         height="fit-content"
       >
-        <Button variant="contained" color="secondary">
+        <Button variant="contained" disabled={!isCanUpload}
+        onClick={handleUploadPhotos} color="secondary">
           <Icon path={uploadIcon} size={1} color="white" />
         </Button>
       </Grid>

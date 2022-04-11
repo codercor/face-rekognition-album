@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, Chip, Grid, Typography } from "@mui/material";
+import {  useSelector } from "react-redux";
 export default function EventInformation() {
+  const eventInfo = useSelector(state => state.uploader.availableEvents.find(event => event.name === state.uploader.selectedEvent));
   return (
     <Box
       sx={{
@@ -19,13 +21,13 @@ export default function EventInformation() {
     >
       <Grid container>
           <Grid item xs={4}  sx={{p:3}} >
-            <Typography variant="overline">Etkinlik kodu</Typography> : <Typography variant="caption">Event Name</Typography>
+            <Typography variant="overline">Etkinlik kodu</Typography> : <Typography variant="caption"> {eventInfo.name} </Typography>
           </Grid>
           <Grid item xs={4}  sx={{p:3}} >
-            <Typography variant="overline">Admin</Typography> : <Chip color="success" label="Cenga" />
+            <Typography variant="overline">Admin</Typography> : <Chip color="success" label={eventInfo.ownerId} />
           </Grid>
           <Grid item xs={4}  sx={{p:3}} >
-            <Typography variant="overline">Etkinlik Tipi</Typography> : <Chip color="secondary" label="Sponsorlu" />
+            <Typography variant="overline">Etkinlik Tipi</Typography> : <Chip color="secondary" label={eventInfo.isPaid ? 'Ücretli':'Ücretsiz'} />
           </Grid>
       </Grid>
     </Box>

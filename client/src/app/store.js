@@ -7,11 +7,13 @@ import thunk from 'redux-thunk';
 import eventSlice from '../features/eventSlice';
 import userSlice from '../features/userSlice';
 import adminSlice from '../features/adminSlice';
+import uploaderSlice from '../features/uploaderSlice';
 
 const reducers = combineReducers({
   event: eventSlice,
   user: userSlice,
   admin: adminSlice,
+  uploader: uploaderSlice,
 });
 
 
