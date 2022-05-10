@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Chip, Grid, Typography } from "@mui/material";
 import {  useSelector } from "react-redux";
-export default function EventInformation() {
+export default function EventInformation({uploadedPhotos}) {
   const eventInfo = useSelector(state => state.uploader.availableEvents.find(event => event.name === state.uploader.selectedEvent));
+  console.log("EVENT INFO",eventInfo);
   return (
     <Box
       sx={{
@@ -20,14 +21,14 @@ export default function EventInformation() {
       }}
     >
       <Grid container>
-          <Grid item xs={4}  sx={{p:3}} >
-            <Typography variant="overline">Etkinlik kodu</Typography> : <Typography variant="caption"> {eventInfo.name} </Typography>
+          <Grid item xs={3}  sx={{p:3,border:'1px gray solid'}} >
+            <Typography sx={{fontSize:'8px',fontWeight:'bold'}} variant="overline">Etkinlik kodu</Typography> : <Typography sx={{fontSize:'7px'}} variant="caption"> {eventInfo.name} </Typography>
           </Grid>
-          <Grid item xs={4}  sx={{p:3}} >
-            <Typography variant="overline">Admin</Typography> : <Chip color="success" label={eventInfo.ownerId} />
+          <Grid item xs={3}  sx={{p:3,border:'1px gray solid'}} >
+            <Typography sx={{fontSize:'7px'}} variant="overline">Etkinlik Tipi</Typography> : <Chip sx={{fontSize:'7px'}} color="secondary" label={eventInfo.isPaid ? 'Ücretli':'Ücretsiz'} />
           </Grid>
-          <Grid item xs={4}  sx={{p:3}} >
-            <Typography variant="overline">Etkinlik Tipi</Typography> : <Chip color="secondary" label={eventInfo.isPaid ? 'Ücretli':'Ücretsiz'} />
+          <Grid item xs={3}  sx={{p:3,border:'1px gray solid'}} > 
+            <Typography sx={{fontSize:'7px'}} variant="overline">Fotoğraf</Typography> : <Chip sx={{fontSize:'7px'}} color="primary" label={`${uploadedPhotos.length} `} />
           </Grid>
       </Grid>
     </Box>

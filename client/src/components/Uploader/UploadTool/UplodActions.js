@@ -60,7 +60,7 @@ export default function UplodActionButtons({
 
   const handleUploadPhotos = () => {
     const photos = selectedPhotos.map((item) => item.file);
-    dispatch(uploadSelectedPhotos({photos, selectedEvent}));
+    dispatch(uploadSelectedPhotos({photos, folder:selectedEvent}));
   }
 
   return (

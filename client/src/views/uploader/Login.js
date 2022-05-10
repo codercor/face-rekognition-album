@@ -59,15 +59,13 @@ export default function Login() {
 
                             dispatch(loginUploader(loginData)).then(res => {
                                 console.log("RES", res);
-                                if (res.payload.data.token && res.payload.data.user.role === "uploader") {
-                                    localStorage.setItem("token", res.payload.data.token);
+                                if (res.payload.token && res.payload.user.role === "uploader") {
                                     navigate('/uploader');
                                 } else {
-                                    alert("ERROR")
+                                    console.log("ERROR LOGIN");
                                 }
                             }).catch(err => {
                                 console.log("ERR", err);
-                                alert("ERROR")
                             })
 
                         }} fullWidth variant="contained" color="secondary">

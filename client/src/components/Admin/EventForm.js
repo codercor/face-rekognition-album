@@ -85,7 +85,7 @@ export default function EventForm() {
     </Grid>
     <Grid item xs={12} md={8}>
       <Typography variant="h2">
-        Event Details
+        Event Preview
       </Typography>
       <Box mt={2} sx={
         {

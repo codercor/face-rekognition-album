@@ -6,21 +6,24 @@ const createEvent = async (data) => {
     return axios.post("/event", { name, backgroundImage, isPaid });
 }
 
+
+
 const deleteEvent = async (name) => {
     return axios.delete("/event/" + name);
 }
 
-const getAllEvents = () => async (dispatch) => {
-    return axios.get("/event");
+const getAllEvents = async () => {
+    return (await axios.get("/event")).data;
 }
 
 const getEvent = (name) => async (dispatch) => {
     return axios.get("/event/" + name);
 }
 
-const updateEvent = (name, data) => async (dispatch) => {
-    let { name, backgroundImage, isPaid } = data;
-    return axios.put("/event/" + name, { name, backgroundImage, isPaid });
+const updateEvent = (data) => {
+    let { name, backgroundImage, isPaid,id } = data;
+    console.log("updateEvent", data);
+    return axios.put("/event/" + name, { id,name, backgroundImage, isPaid });
 }
 
 
@@ -38,6 +41,20 @@ const uploadImage = async (file) => {
     });
 }
 
-export default { createEvent, deleteEvent, getAllEvents, getEvent, updateEvent, uploadImage };
+const createUser = async (data) => {
+    let { name, username, password, phone } = data;
+    return axios.post("/user/createUser", { name, username, password, phone, role:'uploader' });
+}
+
+const getSubUsers = async () => {
+    return (await axios.get("/user/subUsers")).data;
+}
+
+const deleteSubUser = async (id) => {
+    return axios.delete("/user/" + id);
+}
+
+
+export default { deleteSubUser,createUser,getSubUsers,createEvent, deleteEvent, getAllEvents, getEvent, updateEvent, uploadImage };
 
 

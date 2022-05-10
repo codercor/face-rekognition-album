@@ -13,60 +13,49 @@ function writeToLog(log){
     });
 }
 
+
 async function test(){
+    return;
     console.time("my test");
     console.log("TEST STARTED");
     await User.sync({force: true});
     await Event.sync({force: true});
     await Customer.sync({force: true});
-    User.create({ name:'root', username:'root', password:'root', phone:'root', role:'root', ownerId:1 })
-    .then(user => {
-        console.log(user.get());
-        return User.create({ name:'admin', username:'admin', password:'admin', phone:'admin', role:'admin', ownerId:1 });
-    }).then(user => {
-        console.log(user.get());
-        return Event.create({ name:'event1', backgroundImage:'event1', isPaid:true, ownerId:user.get().id });
-    }).then(event => {
-        console.log(event.get());
-        return Customer.create({ faceId:"dada", photos:["1","2"], eventId:event.get().id });
-    }).then((customer) => {
-        console.log(customer.get());
-        console.log("insert done");
-        return User.findAll();
-    }).then(users => {
-        console.log("USERS");
-        console.log(users.map(user => user.get()));
-        return Event.findAll();
-    }).then(events => {
-        console.log("EVENTS");
-        console.log(events.map(event => event.get()));
-        return Customer.findAll();
+    let root = await User.create({ name:'root', username:'root', password:'root', phone:'root', role:'root', ownerId:1 })
+    let admin = await User.create({ name:'admin', username:'admin', password:'admin', phone:'admin', role:'admin', ownerId:root.get().id})
+    let uploader = await User.create({ name:'uploader', username:'uploader', password:'uploader', phone:'uploader', role:'uploader', ownerId:admin.get().id})
+    let event1 = await Event.createEvent('event1', 'event1.jpg', false, admin.get().id);
+    let event2 = await Event.createEvent('event2', 'event2.jpg', false, admin.get().id);
+    let admin1 = await User.create({ name:'admin1', username:'admin1', password:'admin1', phone:'admin1', role:'admin', ownerId:root.get().id})
+    let event3 = await Event.createEvent('event3', 'event3.jpg', false, admin1.get().id);
+    const customer1 = await Customer.create({
+       faceId: "123",
+       photos: ["1.jpg", "2.jpg"],
+         eventId: event1.get().id,
     })
-    .then(customers => {
-        console.log("CUSTOMERS");
-        console.log(customers.map(customer => customer.get()));
-        console.log("READING DONE");
-    }).then(() => {
-        return User.deleteById(2);
-    }).then(() => {
-        return User.findAll();
-    }).then(users => {
-        console.log("USERS");
-        console.log(users.map(user => user.get()));
-        return Event.findAll();
-    }).then(events => {
-        console.log("EVENTS");
-        console.log(events.map(event => event.get()));
-        return Customer.findAll();
-    }).then(customers => {
-        console.log("CUSTOMERS");
-        console.log(customers.map(customer => customer.get()));
-        console.log("READING DONE");
-        console.timeEnd("my test");
+    const customer2 = await Customer.create({
+         faceId: "456",
+            photos: ["3.jpg", "4.jpg"],
+            eventId: event1.get().id,
     })
-    .catch(err => {
-        console.log("TEST ERROR",err);
+       
+    const customer3 = await Customer.create({
+            faceId: "789",
+            photos: ["5.jpg", "6.jpg"],
+            eventId: event2.get().id,
     })
 
+    const customer4 = await Customer.create({
+            faceId: "101112",
+            photos: ["7.jpg", "8.jpg"],
+            eventId: event3.get().id,
+    })
+    console.log("DATA CREATED FINISHED");
+    // setTimeout(() => {
+    //     User.deleteById(admin.get().id).then(() => {
+    //         console.log("admin deleted check it");
+    //     });
+    // }, 15000);
+    
 }
 module.exports = test;

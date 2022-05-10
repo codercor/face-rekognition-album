@@ -1,13 +1,8 @@
-import axios  from "./axios";
+import axios from "./axios";
 
+const login = async (data) => {
+  let { username, password } = data;
+  return (await axios.post("/auth/login", { username, password })).data;
+};
 
-const login =  async (data) => {
-    let {username, password} = data;
-    return axios.post("/auth/login", {username, password});
-}
-
-
-
-export default {login};
-
-
+export default { login };

@@ -13,3 +13,7 @@ export const uploadSelectedPhotos = async (photos, folder) => {
 export const fetchAvailableEvents = async () => {
   return axios.get("/event/userEvents");
 }
+
+export const getUploadedPhotos = async (eventName) => {
+  return (await axios.get(`/s3/getAll/${eventName}`));
+}

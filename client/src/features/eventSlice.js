@@ -44,6 +44,7 @@ export const eventSlice = createSlice({
       state = {
         eventName: "",
         isLoading: false,
+        isLoadingPhotos: false,
         eventBackgroud: "",
         error: null,
         photos: [],
@@ -89,9 +90,11 @@ export const eventSlice = createSlice({
     },
     [searchFace.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log("PHOTOS", action.payload);
+      console.log("PHOTOS", action.payload.data);
       state.photos = action.payload.data;
-      console.log(state.photos);
+      if(action.payload.data.length === 0){
+        state.error = "Yüz bulunamadı";
+      }
     },
   },
 });

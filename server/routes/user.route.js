@@ -22,6 +22,6 @@ router.use(checkToken);
 router.use(roleCheckMiddleware(["root", "admin"]));
 
 router.route("/createUser").post(canCreateMiddleware,userController.createUser);
-
-
+router.route('/subUsers').get(userController.getSubUsers);
+router.route('/:id').delete(userController.deleteSubUser);
 module.exports = router;

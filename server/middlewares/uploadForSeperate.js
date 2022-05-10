@@ -4,8 +4,8 @@ const storage = multer.diskStorage({
         cb(null, 'seperate/before')
       },
       filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, req.body.folder + '-' + uniqueSuffix+'.jpg')
+        const newname = req.body.folder + '-' + Date.now() + '-' + Math.round(Math.random() * 1E9)+'.jpg';
+        cb(null, newname)
       }
 })
 module.exports = multer({ storage: storage });

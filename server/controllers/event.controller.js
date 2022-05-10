@@ -3,12 +3,12 @@ const { createCollection } = require('../services/rekognition.service')
 
 module.exports.createEvent = async (req, res) => {
     const { name, backgroundImage, isPaid } = req.body;
-    console.log(req.body);
     try {
         const event = await eventModel.createEvent(
             name,
             backgroundImage,
-            eval(isPaid)
+            eval(isPaid),
+            req.user.id
         )
        await createCollection(name);
         res.json(event)
@@ -40,10 +40,12 @@ module.exports.getEvent = async (req, res) => {
 
 module.exports.updateEvent = async (req, res) => {
     const eventData = req.body;
+    console.log("Event Data  :",eventData);
     try {
         const event = await eventModel.updateOne(eventData);
         res.json(event)
     } catch (error) {
+        console.log(error);
         res.status(500).json(error)
     }
 }

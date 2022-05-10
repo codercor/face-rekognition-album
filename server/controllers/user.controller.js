@@ -10,3 +10,21 @@ module.exports.createUser = async (req, res) => {
         res.status(500).json(err);
     }
 }
+module.exports.getSubUsers= async (req, res) => {
+    try {
+        const users = await userService.getSubUsers(req.user.id);
+        res.status(200).json(users);
+    } catch (err) {
+        console.log("Get sub users error: ", err);
+        res.status(500).json(err);
+    }
+}
+module.exports.deleteSubUser= async (req, res) => {
+    try {
+        const user = await userService.deleteSubUser(req.params.id,req.user.id);
+        res.status(200).json(user);
+    } catch (err) {
+        console.log("Delete sub user error: ", err);
+        res.status(500).json(err);
+    }
+}

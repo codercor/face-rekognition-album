@@ -17,3 +17,22 @@ module.exports.createUser = async function (user, ownerId) {
   }
 };
 
+module.exports.getSubUsers = async function (ownerId) {
+  try {
+    let users = await UserModel.getSubUsers(ownerId);
+    return users;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+module.exports.deleteSubUser = async function (id, ownerId) {
+  try {
+    let user = await UserModel.deleteSubUser(id,ownerId);
+    return user;
+  }
+  catch (error) {
+    return Promise.reject(error);
+  }
+}
+    

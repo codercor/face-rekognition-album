@@ -17,4 +17,5 @@ app.use('/user',routes.userRouter);
 
 app.listen(3001, () => {
   console.log('listening on port 3000 -> http://localhost:3000');
+  //require("./db.test")();
 });

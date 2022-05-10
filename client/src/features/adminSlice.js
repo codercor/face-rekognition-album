@@ -5,21 +5,25 @@ export const createEvent = createAsyncThunk(
     "admin/createEvent",
     async (data, { dispatch }) => {
         let { eventName:name, backgroundImage, isPaid } = data;
-        return await adminService.createEvent({ name, backgroundImage, isPaid });
+        await adminService.createEvent({ name, backgroundImage, isPaid });
+        dispatch(getAllEvents());
     }
 );
 
 export const deleteEvent = createAsyncThunk(
     "admin/deleteEvent",
     async (name, { dispatch }) => {
-        return await adminService.deleteEvent(name);
+         await adminService.deleteEvent(name);
+         dispatch(getAllEvents());
     }
 );
 
 export const getAllEvents = createAsyncThunk(
     "admin/getAllEvents",
-    async (data, { dispatch }) => {
-        return await adminService.getAllEvents();
+    async (data) => {
+        console.log("ÇALIŞTI");
+        const events =  await adminService.getAllEvents();
+        return events;
     }
 );
 
@@ -33,8 +37,10 @@ export const getEvent = createAsyncThunk(
 export const updateEvent = createAsyncThunk(
     "admin/updateEvent",
     async (data, { dispatch }) => {
-        let { name, backgroundImage, isPaid } = data;
-        return await adminService.updateEvent(name, { name, backgroundImage, isPaid });
+        let { name, backgroundImage, isPaid,id } = data;
+        console.log(name, backgroundImage, isPaid,id);
+        await adminService.updateEvent({ id,name, backgroundImage, isPaid });
+        dispatch(getAllEvents())
     }
 );
 
@@ -46,10 +52,35 @@ export const uploadImage = createAsyncThunk(
     }
 );
 
+export const getSubUsers = createAsyncThunk(
+    "admin/getSubUsers",
+    async () => {
+        return await adminService.getSubUsers();
+    }
+);
+
+export const deleteSubUser = createAsyncThunk(
+    "admin/deleteSubUser",
+    async (id, { dispatch }) => {
+        await adminService.deleteSubUser(id);
+        dispatch(getSubUsers());
+    }
+);
+
+export const createUser = createAsyncThunk(
+    "admin/createUser",
+    async (data, { dispatch }) => {
+        let { name, username, password, phone } = data;
+        await adminService.createUser({ name, username, password, phone });
+        dispatch(getSubUsers());
+    }
+);
+
 export const adminSlice = createSlice({
     name: "admin",
     initialState: {
         events: [],
+        subUsers:[],
         emptyEvent: {
             eventName: "",
             backgroundImage: "",
@@ -80,11 +111,10 @@ export const adminSlice = createSlice({
     },
     extraReducers: {
         [createEvent.fulfilled]: (state, action) => {
-            state.events.push(action.payload);
             state.newItem.isOk = true;
         },
         [deleteEvent.fulfilled]: (state, action) => {
-            state.events = state.events.filter(event => event.name !== action.payload);
+            return state;
         },
         [getAllEvents.fulfilled]: (state, action) => {
             state.events = action.payload;
@@ -93,8 +123,7 @@ export const adminSlice = createSlice({
             state.emptyEvent = action.payload;
         },
         [updateEvent.fulfilled]: (state, action) => {
-            let index = state.events.findIndex(event => event.name === action.payload.name);
-            state.events[index] = action.payload;
+            return state;
         },
         [uploadImage.fulfilled]: (state, action) => {
            let response = action.payload;
@@ -104,6 +133,9 @@ export const adminSlice = createSlice({
                 ...state.newItem,
                 backgroundImage: fileName
             }
+        },
+        [getSubUsers.fulfilled]: (state, action) => {
+            state.subUsers = action.payload;
         }
     },
 });

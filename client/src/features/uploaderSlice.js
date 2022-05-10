@@ -1,12 +1,25 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { uploadSelectedPhotos as uploadSelectedPhotosService,fetchAvailableEvents as fetchAvailableEventsService } from "../services/uploader.service";
+import { 
+  uploadSelectedPhotos as uploadSelectedPhotosService,
+  fetchAvailableEvents as fetchAvailableEventsService,
+  getUploadedPhotos as fetchEventPhotosService } from "../services/uploader.service";
 
-export const uploadSelectedPhotos = createAsyncThunk("uploader/uploadSelectedPhotos",({photos,folder}) => {
-  return uploadSelectedPhotosService(photos, folder);
+export const uploadSelectedPhotos = createAsyncThunk("uploader/uploadSelectedPhotos",async ({photos,folder},{dispatch}) => {
+  let result = await uploadSelectedPhotosService(photos, folder);
+  dispatch(getUploadedPhotos(folder));
+  return result;
 });
+
 export const fetchAvailableEvents = createAsyncThunk("uploader/fetchAvailableEvents",() => {
   return fetchAvailableEventsService();
 });
+
+export const getUploadedPhotos = createAsyncThunk("uploader/getEventPhotos",async (eventName) => {
+  console.log("eventName", eventName);
+  const eventPhotos = await fetchEventPhotosService(eventName);
+  console.log("eventPhotos", eventPhotos);
+  return eventPhotos;
+})
 
 const initialState = {
   selectedEvent: "",
@@ -39,7 +52,7 @@ export const uploaderSlice = createSlice({
     },
     [uploadSelectedPhotos.fulfilled]: (state, action) => {
       state.isLoadingPhotosUpload = false;
-      state.uploadedPhotos = action.payload.data
+      //action.payload.data=action.payload.data.map(item=>item.split("/")[1]);
     },
     [uploadSelectedPhotos.rejected]: (state, action) => {
       state.isLoadingPhotosUpload = false;
@@ -57,6 +70,10 @@ export const uploaderSlice = createSlice({
     [fetchAvailableEvents.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = "Uygun eventler yüklenemedi";
+    },
+    [getUploadedPhotos.fulfilled]: (state, action) => {
+      console.log("Fotoğraflar yüklendi.",action.payload.data);
+      state.uploadedPhotos = action.payload.data;
     }
 
   },

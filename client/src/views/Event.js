@@ -33,31 +33,30 @@ export default function Event() {
 
   const EventNotFoundPopUp = (props) => (
     <EventPopup {...props}>
-      <Typography variant="h5">Bu etkinlik bulunamadı.</Typography>
+      <Typography variant="h5">{props.message}</Typography>
     </EventPopup>
   );
 
   useEffect(() => {
     console.log("eventData", eventData);
-    if(!eventData.error) return;
-    setOpen(true);
-    setTimeout(() => {
-      dispatch(reset());
-      navigate("/");
-    }, 1000);
-    
+    if (eventData.error) {
+      setOpen(true);
+      let timer = setTimeout(() => {
+        dispatch(reset());
+      }, 3000);
+      return () => {
+        clearTimeout(timer);
+        navigate(-1);
+      };
+    }
   }, [eventData.error]);
 
   useEffect(() => {
     dispatch(reset());
   }, []);
 
-  useEffect(async () => {
-    try {
-      await dispatch(getEvent(event));
-    } catch (error) {
-      console.log("HABURASI", error);
-    }
+  useEffect(() => {
+      dispatch(getEvent(event));
   }, [event]);
 
   useEffect(() => {}, [eventData]);
@@ -94,7 +93,11 @@ export default function Event() {
       }}
     >
       {eventData.error ? (
-        <EventNotFoundPopUp open={open} handleClose={handleClose} />
+        <EventNotFoundPopUp
+          open={open}
+          message={eventData.error}
+          handleClose={handleClose}
+        />
       ) : (
         <Box
           sx={{
@@ -104,7 +107,7 @@ export default function Event() {
             flexDirection: "column",
             background: "rgba(0,0,0,0.5)",
             color: "white",
-            width:{
+            width: {
               xs: "100vw",
               md: "50%",
             },
@@ -114,8 +117,6 @@ export default function Event() {
             },
           }}
         >
-       
-
           {eventData.isLoading ? (
             <Loading />
           ) : eventData.photos.length < 1 ? (

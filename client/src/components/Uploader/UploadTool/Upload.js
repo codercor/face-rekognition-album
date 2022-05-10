@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import UplodActionButtons from "./UplodActions";
-import { Info as InfoIcon } from '@mui/icons-material'
+import { DeleteForever, Info as InfoIcon } from '@mui/icons-material'
 
 import { setSelectedPhotos } from '../../../features/uploaderSlice'
 import {useDispatch, useSelector} from "react-redux";
@@ -26,12 +26,12 @@ const boxStyle = {
 };
 
 
-export default function Upload() {
+export default function Upload({uploadedPhotos}) {
   const [selectedImages, setSelectedImages] = React.useState([]);
   const dispatch = useDispatch();
   const selectedPhotos = useSelector(state => state.uploader.selectedPhotos);
   console.log(selectedPhotos);
-  const uploadedPhotos = useSelector(state => state.uploader.uploadedPhotos);
+  
   const handleSetSelectedPhotos = (data)=>{
     dispatch(setSelectedPhotos(data));
   }
@@ -54,20 +54,19 @@ export default function Upload() {
                 />
               </Grid>
               <Grid item xs={12} container>
-                <ImageList cols={3}  variant="masonry">
+                <ImageList rowHeight={100}   variant="masonry">
                   {selectedPhotos.length > 0 &&
                     selectedPhotos.map((item, i) => (
-                      <ImageListItem key={item.file.name} >
+                      <ImageListItem  key={item.file.name} >
                         <img src={item.src}  />
                         <ImageListItemBar
-                          title="Yüklenme Hazır"
-                          subtitle={"5 kişi tanımlandı"}
+                          title="Ready"
                           actionIcon={
                             <IconButton
-                              sx={{ color: "rgba(255, 255, 255, 0.54)" }}
+                              sx={{ color: "rgba(255, 10, 10, 0.54)" }}
                               aria-label={`info about ${item.title}`}
                             >
-                              <InfoIcon />
+                              <DeleteForever />
                             </IconButton>
                           }
                         />

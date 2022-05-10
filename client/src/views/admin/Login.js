@@ -59,8 +59,8 @@ export default function Login() {
 
                             dispatch(loginAdmin(loginData)).then(res => {
                                 console.log("RES", res);
-                                if (res.payload.data.token && res.payload.data.user.role === "admin") {
-                                    localStorage.setItem("token", res.payload.data.token);
+                                if (res.payload.token && res.payload.user.role === "admin") {
+                                    localStorage.setItem("token", res.payload.token);
                                     navigate('/admin');
                                 } else {
                                     alert("ERROR")

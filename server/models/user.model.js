@@ -20,7 +20,7 @@ User.init(
     },
     password: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: false,
     },
     phone: {
       type: DataTypes.STRING,
@@ -52,7 +52,7 @@ User.init(
   }
 );
 
-//User.sync({ force: true });
+//User.sync({force: true});
 
 User.roles = ["root", "admin", "user", "uploader"];
 
@@ -108,6 +108,19 @@ User.getOne = function (id) {
     },
   });
 };
+
+User.getSubUsers = function (ownerId) {
+  return User.findAll({
+    where: {
+      ownerId,
+    },
+  });
+}
+
+User.deleteSubUser = function (id, ownerId) {
+  return User.destroy({ where: { id, ownerId } });
+}
+
 //User.findAll({}).then((users) => { console.log(users.map((user)=>user.get())) });
 
 module.exports = User;
